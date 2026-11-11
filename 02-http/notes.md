@@ -412,6 +412,42 @@ Opening the page in Firefox sends a much bigger request:
 **Cookie lesson:** cookies belong to the **host name, not the port**. `localhost:3000` and `localhost:5173` share cookies. So any app you run on localhost receives login tokens from every other localhost project. Never paste the `Cookie:` line anywhere public.
 
 ### Step 3: Different pages for different paths
+
+The path lives in the request's first line: `GET /about HTTP/1.1`. Cut it at the spaces to get it.
+
+```js
+const firstLine = request.split("\r\n")[0];
+const [method, path] = firstLine.split(" ");
+
+if (path === "/") {
+  body = "Home page\n";
+} else if (path === "/about") {
+  body = "About: this server is built from scratch\n";
+} else {
+  status = "404 Not Found";
+  body = "Nothing here\n";
+}
+```
+
+| Code | In plain words |
+|---|---|
+| `split("\r\n")[0]` | Cut request into lines, keep the first |
+| `split(" ")` | Cut `GET /about HTTP/1.1` into 3 pieces |
+| `const [method, path]` | Name the first two pieces |
+| `if / else` | Pick the reply based on the path. This is **routing**. |
+| `404 Not Found` | "That page doesn't exist" |
+
+Try it (`-i` shows status line + headers):
+
+```bash
+curl -i localhost:3000/          # 200 OK, Home page
+curl -i localhost:3000/about     # 200 OK, About...
+curl -i localhost:3000/banana    # 404 Not Found
+```
+
+**This is all Express does underneath** `app.get("/about", ...)`: read the first line, compare the path, write a reply.
+
+### Step 4: Send JSON
 *Coming next.*
 
 ---
