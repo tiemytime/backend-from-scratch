@@ -537,6 +537,7 @@ curl -i localhost:3000/api/notes -d 'oops not json'         # 400
 
 `-d '...'` = send this as the body. curl switches to POST by itself.
 
+- curl `-d` labels the body `application/x-www-form-urlencoded` (form data) by default. Our server ignores that label. To be correct, add `-H "Content-Type: application/json"`.
 - `curl: option -d: requires parameter` → `-d` with nothing after it.
 - **Restart the server and "Buy milk" is gone.** `notes` lives in memory (RAM), which is wiped when the program stops. Keeping data needs a file or a database.
 
