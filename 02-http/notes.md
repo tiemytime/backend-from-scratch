@@ -642,6 +642,82 @@ Without our `Content-Length`, Node sends `Transfer-Encoding: chunked` instead: "
 
 **Mistake:** `SyntaxError: Invalid or unexpected token` with `^^^` under some text → a long line got split in two while copying. Text in `"..."` must stay on one line. Fix in nvim: go to the line, press `J` to join the next line onto it.
 
+### Step 8: One specific note (CRUD)
+
+| Request | In plain words | Reply |
+|---|---|---|
+| `GET /api/notes/2` | Show me note 2 | 200 + the note |
+| `PUT /api/notes/2` | Change note 2 to this | 200 + updated note |
+| `DELETE /api/notes/2` | Throw away note 2 | 204 No Content |
+| any of these, unknown id | | 404 |
+| `PATCH /api/notes/2` | (not handled) | 405 Method Not Allowed |
+
+Create, Read, Update, Delete = **CRUD**. Most apps are CRUD with extra steps.
+
+```js
+} else if (req.url.startsWith("/api/notes/")) {
+  const id = Number(req.url.split("/")[3]);
+  const note = notes.find((n) => n.id === id);
+
+  if (!note) {
+    sendJson(res, 404, { error: "No such note" });
+  } else if (req.method === "GET") {
+    sendJson(res, 200, note);
+  } else if (req.method === "PUT") {
+    readBody(req, (requestBody) => {
+      // JSON.parse, note.text = input.text, saveNotes(), sendJson 200
+    });
+  } else if (req.method === "DELETE") {
+    notes = notes.filter((n) => n.id !== id);
+    saveNotes();
+    send(res, 204, "text/plain", "");
+  }
+}
+```
+
+**Reading the id from the path:**
+
+```
+"/api/notes/7".split("/")
+→  [ "",   "api",   "notes",   "7" ]
+     0      1        2          3
+```
+`split` cuts at the slashes and throws them away. Piece 0 is empty because the path starts with `/`. `Number("7")` → `7`.
+
+**Three list tools:**
+
+| Tool | Goes through | Gives back |
+|---|---|---|
+| `find` | one at a time, **stops at first match** | one item (or `undefined`) |
+| `filter` | **every** item | a new list of items where the question is **true** |
+| `map` | **every** item | a new list, each item **turned into** something else |
+
+`filter` **keeps** what's true. To delete note 1, ask "is this **not** note 1?" (`n.id !== id`). Asking `n.id === id` keeps only note 1 and deletes everything else. No crash, just wrong.
+
+**Helpers:** `sendJson(res, status, data)` = send as JSON in one line. `readBody(req, callback)` = collect the body, then run `callback` with it. A **callback** is an instruction left for later: "when the parcel arrives, do this".
+
+`let notes` instead of `const`: DELETE points `notes` at a brand new list.
+
+**The duplicate-id bug:**
+
+```js
+id: notes.length + 1      // count + 1
+```
+Notes 1, 2 → delete 1 → one note left (id 2) → next id = 1 + 1 = **2 again**. Then `find` only ever sees the first id 2, and `filter` deletes both.
+
+Fix: biggest id + 1, with a floor of 0 for the empty list.
+
+```js
+const nextId = Math.max(0, ...notes.map((n) => n.id)) + 1;
+```
+Without the `0`: `Math.max()` of nothing is `-Infinity`, and JSON saves that as `null`. **Always test the empty case.**
+
+### Lessons from mistakes along the way
+- JS is **case-sensitive**: `saveNOtes`, `REs` → `ReferenceError: ... is not defined`. Check spelling first.
+- Typo'd a variable name (`notr` vs `note`) → crash inside `try` → `catch` replied "Bad JSON" even though the JSON was fine. **`catch` catches every crash, not just the one you expect.** Always `console.log(err)` in `catch` so the real reason shows.
+- Use `===` / `!==`, not `==`. `"7" == 7` is true (loose), `"7" === 7` is false (exact).
+- Deleting `notes.json` while the server runs doesn't clear its memory. Restart it.
+
 ---
 
 ## Resources

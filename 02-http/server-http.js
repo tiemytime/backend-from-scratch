@@ -1,4 +1,4 @@
-  const http = require("http");
+const http = require("http");
   const fs = require("fs");
 
   const FILE = __dirname + "/notes.json";
@@ -22,7 +22,21 @@
     res.end(body);
   }
 
-  const notes = loadNotes();
+  function sendJson(res, status, data) {
+    send(res, status, "application/json", JSON.stringify(data));
+  }
+
+  function readBody(req, callback) {
+    let requestBody = "";
+    req.on("data", (chunk) => {
+      requestBody += chunk;
+    });
+    req.on("end", () => {
+      callback(requestBody);
+    });
+  }
+
+  let notes = loadNotes();
   console.log("Loaded", notes.length, "notes from disk");
 
   const server = http.createServer((req, res) => {
@@ -33,23 +47,48 @@
     } else if (req.url === "/about") {
       send(res, 200, "text/plain", "About: this server is built from scratch\n");
     } else if (req.method === "GET" && req.url === "/api/notes") {
-      send(res, 200, "application/json", JSON.stringify(notes));
+      sendJson(res, 200, notes);
     } else if (req.method === "POST" && req.url === "/api/notes") {
-      let requestBody = "";
-      req.on("data", (chunk) => {
-        requestBody += chunk;
-      });
-      req.on("end", () => {
+      readBody(req, (requestBody) => {
         try {
           const input = JSON.parse(requestBody);
-          const note = { id: notes.length + 1, text: input.text };
+          const nextId = Math.max(0, ...notes.map((n) => n.id)) + 1;
+          const note = {id: nextId, text: input.text };
           notes.push(note);
           saveNotes();
-          send(res, 201, "application/json", JSON.stringify(note));
+          sendJson(res, 201, note);
         } catch (err) {
-          send(res, 400, "application/json", JSON.stringify({ error: "Body must be valid JSON" }));
+          console.log(err);
+          sendJson(res, 400, { error: "Bad JSON" });
         }
       });
+    } else if (req.url.startsWith("/api/notes/")) {
+      const id = Number(req.url.split("/")[3]);
+      const note = notes.find((n) => n.id === id);
+
+      if (!note) {
+        sendJson(res, 404, { error: "No such note" });
+      } else if (req.method === "GET") {
+        sendJson(res, 200, note);
+      } else if (req.method === "PUT") {
+        readBody(req, (requestBody) => {
+          try {
+            const input = JSON.parse(requestBody);
+            note.text = input.text;
+            saveNotes();
+            sendJson(res, 200, note);
+          } catch (err) {
+          console.log(err);
+            sendJson(res, 400, { error: "Bad JSON" });
+          }
+        });
+      } else if (req.method === "DELETE") {
+        notes = notes.filter((n) => n.id !== id);
+        saveNotes();
+        send(res, 204, "text/plain", "");
+      } else {
+        send(res, 405, "text/plain", "Method not allowed\n");
+      }
     } else {
       send(res, 404, "text/plain", "Nothing here\n");
     }
