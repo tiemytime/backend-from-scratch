@@ -313,7 +313,9 @@ No expiry date = **session cookie** (gone when the browser closes).
 
 Goal: see that HTTP is **just text over a TCP connection**. Express, Next.js etc. do this under the hood.
 
-Code: [`server.js`](./server.js)
+Code: [`server.js`](./server.js) (by hand), [`server-http.js`](./server-http.js) (with the `http` module)
+
+New to this? Read the story version first: [in-plain-words.md](./in-plain-words.md)
 
 ### Step 1: A server that only listens
 

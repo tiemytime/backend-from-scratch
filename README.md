@@ -9,7 +9,7 @@ Written for me, and for anyone starting backend from zero.
 | # | Topic | What's inside |
 |---|---|---|
 | 01 | [Terminal](./01-terminal/notes.md) | The 4 pieces of a terminal, stdin/stdout/stderr, pipes, redirects, PATH, job control, escape codes, nvim basics |
-| 02 | [How the web works + HTTP](./02-http/notes.md) | DNS → TCP → TLS → request → response, status codes, methods, REST, headers, cookies, a raw HTTP server |
+| 02 | [How the web works + HTTP](./02-http/notes.md) | DNS → TCP → TLS → request → response, status codes, methods, REST, headers, cookies, a raw HTTP server ([in plain words](./02-http/in-plain-words.md)) |
 
 ## Roadmap
 
