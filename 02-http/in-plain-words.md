@@ -208,16 +208,53 @@ Exactly the same in both files:
 
 ---
 
-## Coming next
+## Step 8: Work with one specific note
 
-### Step 8: Work with one specific note
-Right now customers can only say "show me **all** notes" or "add a note". Next they can point at **one** note:
+Before, customers could only say "show me **all** notes" or "add a note". Now they can point at **one** note by its number, using the address:
 
-- "show me note **3**"
-- "**change** note 3"
-- "**throw away** note 3"
+| Address | Plain words |
+|---|---|
+| `GET /api/notes/3` | "Show me note 3" |
+| `PUT /api/notes/3` | "Change note 3 to this" |
+| `DELETE /api/notes/3` | "Throw away note 3" |
 
-Show, add, change, delete together are called **CRUD**. Almost every app in the world is CRUD with extra steps. This step also reveals a bug in our numbering: after a delete, two notes can end up with the same number.
+Show, add, change, delete together are called **CRUD**. Almost every app in the world is CRUD with extra steps.
 
-### Step 9: Search and filter
-Customers add extra wishes to the address, like `/api/notes?search=milk`, meaning "only notes containing milk". The part after `?` is a **query string**. Same idea as Google reading your search from its URL.
+**How the server finds note 3:**
+1. Cut the address at every `/`: `""`, `"api"`, `"notes"`, `"3"`. Take piece number 3 (counting starts at 0).
+2. Walk along the shelf and stop at the first note numbered 3 (`find`).
+3. No such note? Say **"we don't have that" (404)**.
+
+**How delete works:** we don't tear a page out. We copy every note **except** that one onto a fresh list (`filter`), and keep the fresh list.
+
+**The ticket-number bug.** New notes got the number "how many notes there are, plus 1". Then:
+
+- Notes 1 and 2 exist. Delete note 1. Now there's **one** note, numbered 2.
+- Add a new note: "one note, plus 1" = **2**. That number is already taken.
+
+Like a queue where tickets are numbered by "people in line + 1": someone leaves, and the next person gets a number already in someone's hand.
+
+**The fix:** look at the **biggest** number on the shelf and add 1. Deleting can never make the biggest number go back to one that's in use. On an empty shelf, start from 0, so the first note gets 1.
+
+## Step 9: Search
+
+Customers can attach a **sticky note** to the address:
+
+```
+/api/notes?search=milk
+```
+
+"Give me notes, but only the ones about milk." Google does the same: `google.com/search?q=cats`.
+
+- The part before `?` is the **path**: *which* thing you want.
+- The part after `?` is the **query string**: extra wishes.
+
+**The problem:** our server compared the whole address, sticky note included, so `/api/notes?search=milk` didn't match `/api/notes` and got a 404.
+
+**The fix:** an address-cutter (`URL`) peels the sticky note off first. The server checks the clean path, then reads the sticky note separately.
+
+**Capital letters:** to a computer, `B` and `b` are different letters, so searching "buy" didn't find "Buy milk". We turn **both** the search word and each note into small letters before comparing.
+
+---
+
+**Stage 2 done.** Next we hire a much bigger assistant, **Express**, and see how much of this it does for us.

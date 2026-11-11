@@ -11,6 +11,17 @@ Written for me, and for anyone starting backend from zero.
 | 01 | [Terminal](./01-terminal/notes.md) | The 4 pieces of a terminal, stdin/stdout/stderr, pipes, redirects, PATH, job control, escape codes, nvim basics |
 | 02 | [How the web works + HTTP](./02-http/notes.md) | DNS → TCP → TLS → request → response, status codes, methods, REST, headers, cookies, a raw HTTP server ([in plain words](./02-http/in-plain-words.md)) |
 
+## Run the code
+
+Needs [Node.js](https://nodejs.org) 18 or newer.
+
+```bash
+cd 02-http
+node server-http.js                              # terminal 1
+curl localhost:3000/api/notes -d '{"text":"hi"}' # terminal 2
+curl localhost:3000/api/notes
+```
+
 ## Roadmap
 
 1. ✅ Terminal basics
