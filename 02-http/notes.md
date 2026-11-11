@@ -591,6 +591,55 @@ Test: POST a note, `cat notes.json`, **Ctrl+C and restart the server**, GET agai
 
 Databases (SQLite, Postgres) solve exactly these problems.
 
+### Step 7: Use Node's `http` module
+
+Same app, new file `server-http.js`. The `http` module does the cutting-up we did by hand. (`server.js` stays as the by-hand version for comparison.)
+
+| By hand (`net`) | With `http` |
+|---|---|
+| `net.createServer((socket) => ...)` | `http.createServer((req, res) => ...)` |
+| split first line → method | `req.method` |
+| split first line → path | `req.url` |
+| write status line + each header | `res.writeHead(200, { ...headers })` |
+| `socket.write(body); socket.end()` | `res.end(body)` |
+| cut at `\r\n\r\n` for the body | `req.on("data")` + `req.on("end")` |
+
+```js
+let requestBody = "";
+req.on("data", (chunk) => {
+  requestBody += chunk;
+});
+req.on("end", () => {
+  // whole body has arrived, now JSON.parse it
+});
+```
+
+**The body arrives in chunks**, like a long letter delivered page by page. `data` = "a page arrived, add it to the pile". `end` = "all pages here, read it". The by-hand server assumed one piece; it only worked because notes were tiny.
+
+A helper keeps every reply to one line:
+
+```js
+function send(res, status, contentType, body) {
+  res.writeHead(status, {
+    "Content-Type": contentType,
+    "Content-Length": Buffer.byteLength(body),
+  });
+  res.end(body);
+}
+```
+
+Headers added for free:
+
+| Header | In plain words |
+|---|---|
+| `Date` | When the reply was made |
+| `Connection: keep-alive` | "Keep this line open, send more requests on it" |
+| `Keep-Alive: timeout=5` | "...but I hang up after 5 idle seconds" |
+
+Without our `Content-Length`, Node sends `Transfer-Encoding: chunked` instead: "the body comes in pieces, each with its size, and an empty piece means done".
+
+**Mistake:** `SyntaxError: Invalid or unexpected token` with `^^^` under some text → a long line got split in two while copying. Text in `"..."` must stay on one line. Fix in nvim: go to the line, press `J` to join the next line onto it.
+
 ---
 
 ## Resources
