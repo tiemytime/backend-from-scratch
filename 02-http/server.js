@@ -6,6 +6,10 @@ const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     console.log("---- They sent: ----");
     console.log(data.toString());
+    socket.write("HTTP/1.1 200 OK\r\n");
+    socket.write("\r\n");
+    socket.write("Hello from lipakshi's server\n");
+    socket.end();
   });
 });
 

@@ -372,6 +372,46 @@ Accept: */*
 - Code changes only apply after restarting the server (Ctrl+C, then `node server.js`).
 
 ### Step 2: Send a reply
+
+Add these lines inside `socket.on("data", ...)`, right after the `console.log`:
+
+```js
+    socket.write("HTTP/1.1 200 OK\r\n");
+    socket.write("\r\n");
+    socket.write("Hello from lipakshi's server\n");
+    socket.end();
+```
+
+| Code | In plain words |
+|---|---|
+| `HTTP/1.1 200 OK` | Status line: "I understood you, all good." |
+| `\r\n` alone | Empty line = "headers are done, body starts now" |
+| `Hello from...` | The body. What you actually see. |
+| `socket.end()` | Hang up |
+
+`\r\n` = HTTP's "new line". Every line in a request or response ends with it.
+
+**A response has the same shape as a request:** first line, headers, empty line, body.
+
+Now `curl` prints the text and exits, and opening `http://localhost:3000` in a browser shows it too.
+
+**Missing `Content-Type`?** It still worked because the browser *guessed* the type. Real servers always say it, e.g. `Content-Type: text/plain`.
+
+### What a browser sends (vs curl)
+
+Opening the page in Firefox sends a much bigger request:
+
+| Header | In plain words |
+|---|---|
+| `User-Agent` | "I'm Firefox on Linux" |
+| `Accept` | "I prefer HTML, but anything (`*/*`) is fine" |
+| `Accept-Encoding: gzip, ...` | "You can compress the reply" |
+| `Connection: keep-alive` | "Keep this line open for more requests" |
+| `Cookie` | **Every cookie saved for `localhost`** |
+
+**Cookie lesson:** cookies belong to the **host name, not the port**. `localhost:3000` and `localhost:5173` share cookies. So any app you run on localhost receives login tokens from every other localhost project. Never paste the `Cookie:` line anywhere public.
+
+### Step 3: Different pages for different paths
 *Coming next.*
 
 ---
