@@ -490,6 +490,57 @@ Content-Length: 63
 - Open `/api/notes` in Firefox: it detects the JSON and shows a viewer.
 
 ### Step 5: Receive data (POST)
+
+A `POST` request **carries a body**, after the empty line, just like a response:
+
+```
+POST /api/notes HTTP/1.1
+Host: localhost:3000
+Content-Type: application/x-www-form-urlencoded
+
+{"text":"Buy milk"}
+```
+
+```js
+const [head, requestBody] = request.split("\r\n\r\n");
+
+} else if (method === "POST" && path === "/api/notes") {
+  contentType = "application/json";
+  try {
+    const input = JSON.parse(requestBody);
+    const note = { id: notes.length + 1, text: input.text };
+    notes.push(note);
+    status = "201 Created";
+    body = JSON.stringify(note);
+  } catch (err) {
+    status = "400 Bad Request";
+    body = JSON.stringify({ error: "Body must be valid JSON" });
+  }
+}
+```
+
+| Code | In plain words |
+|---|---|
+| `split("\r\n\r\n")` | Cut at the empty line: head on the left, body on the right |
+| `method === "POST" && path === ...` | Same path, different job depending on the method |
+| `JSON.parse` | JSON text → JS object (opposite of `stringify`) |
+| `notes.push(note)` | Add to the end of the list |
+| `201 Created` | "Done, I made a new thing" |
+| `try / catch` | "Try this; if it crashes, do the catch part instead of dying" |
+| `400 Bad Request` | "You sent something broken" (client's fault) |
+
+```bash
+curl -i localhost:3000/api/notes -d '{"text":"Buy milk"}'   # 201, {"id":3,...}
+curl -i localhost:3000/api/notes                            # now 3 notes
+curl -i localhost:3000/api/notes -d 'oops not json'         # 400
+```
+
+`-d '...'` = send this as the body. curl switches to POST by itself.
+
+- `curl: option -d: requires parameter` → `-d` with nothing after it.
+- **Restart the server and "Buy milk" is gone.** `notes` lives in memory (RAM), which is wiped when the program stops. Keeping data needs a file or a database.
+
+### Step 6: Keep data after restart
 *Coming next.*
 
 ---
