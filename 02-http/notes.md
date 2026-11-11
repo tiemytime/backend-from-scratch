@@ -448,6 +448,48 @@ curl -i localhost:3000/banana    # 404 Not Found
 **This is all Express does underneath** `app.get("/about", ...)`: read the first line, compare the path, write a reply.
 
 ### Step 4: Send JSON
+
+Apps talk to servers in **JSON**, text that code can read. Add a route that returns a list:
+
+```js
+const notes = [
+  { id: 1, text: "Learn HTTP" },
+  { id: 2, text: "Build a server" },
+];
+
+// inside the if/else:
+} else if (path === "/api/notes") {
+  contentType = "application/json";
+  body = JSON.stringify(notes);
+}
+
+// when replying:
+socket.write("Content-Type: " + contentType + "\r\n");
+socket.write("Content-Length: " + Buffer.byteLength(body) + "\r\n");
+```
+
+| Code | In plain words |
+|---|---|
+| `notes` | A list kept in memory. A pretend database (gone when the server restarts). |
+| `JSON.stringify(notes)` | JS list → JSON text that can travel over the wire |
+| `Content-Type: application/json` | "This body is JSON, not plain text" |
+| `Content-Length` | "The body is exactly N **bytes**", so the client knows when it ends |
+| `Buffer.byteLength(body)` | Count bytes, not letters (an emoji = 1 letter, 4 bytes) |
+
+```
+$ curl -i localhost:3000/api/notes
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 63
+
+[{"id":1,"text":"Learn HTTP"},{"id":2,"text":"Build a server"}]%
+```
+
+- `Home page\n` has Content-Length 10: 9 visible characters + the invisible `\n`.
+- **That `%` at the end** is zsh saying "this output didn't end with a new line". `JSON.stringify` doesn't add `\n`. Not an error; JSON doesn't need one.
+- Open `/api/notes` in Firefox: it detects the JSON and shows a viewer.
+
+### Step 5: Receive data (POST)
 *Coming next.*
 
 ---
