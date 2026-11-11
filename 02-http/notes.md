@@ -718,6 +718,60 @@ Without the `0`: `Math.max()` of nothing is `-Infinity`, and JSON saves that as 
 - Use `===` / `!==`, not `==`. `"7" == 7` is true (loose), `"7" === 7` is false (exact).
 - Deleting `notes.json` while the server runs doesn't clear its memory. Restart it.
 
+### Step 9: Search with a query string
+
+```
+/api/notes?search=milk
+```
+
+| Part | Name | Meaning |
+|---|---|---|
+| `/api/notes` | **path** | which thing you want |
+| `?` | | extra wishes start here |
+| `search=milk` | **query string** | a wish: name `search`, value `milk` |
+
+Several wishes: `?search=milk&limit=5`. Google does the same: `google.com/search?q=cats`.
+
+**The problem:** `req.url` is now `"/api/notes?search=milk"`, which is not exactly `"/api/notes"`, so the route gives 404. And `/api/notes/4?x=1` splits into `"4?x=1"`, not a number.
+
+**The fix:** peel the query string off first with `URL`, and route on `path` everywhere.
+
+```js
+const url = new URL(req.url, "http://localhost");  // URL wants a full address
+const path = url.pathname;                          // "/api/notes"
+url.searchParams.get("search");                     // "milk", or null if not given
+```
+
+```js
+} else if (req.method === "GET" && path === "/api/notes") {
+  const search = url.searchParams.get("search");
+  if (!search) {
+    sendJson(res, 200, notes);
+  } else {
+    const word = search.toLowerCase();
+    const matches = notes.filter((n) => n.text.toLowerCase().includes(word));
+    sendJson(res, 200, matches);
+  }
+}
+```
+
+| Code | In plain words |
+|---|---|
+| `"Buy milk".includes("milk")` | Does this text contain that text? |
+| `.toLowerCase()` | Make everything small letters |
+
+`includes` is **case-sensitive**: `"Buy milk".includes("buy")` is `false`. Lowercase **both sides** so `buy`, `Buy`, `BUY` all match.
+
+In zsh, put addresses with `?` in quotes: `curl "localhost:3000/api/notes?search=milk"`.
+
+### Lessons from mistakes along the way
+- Blanks like `_______` in an exercise are for **replacing**. Left in, Node reads it as a name: `ReferenceError: _______ is not defined`.
+- `filter((n) => matches)` → the part after `=>` must be a **question about `n`** that gives true/false, not the list itself.
+- `curl: (52) Empty reply from server` → the server crashed mid-request (no `try/catch` around it). Check the server terminal.
+- Reading an error: **file:line**, the `^` arrow points at the spot, the last line says what kind of problem.
+
+**Stage 2 (HTTP) done.** Next: Express.
+
 ---
 
 ## Resources

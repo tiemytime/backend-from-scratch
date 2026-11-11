@@ -14,7 +14,7 @@ Written for me, and for anyone starting backend from zero.
 ## Roadmap
 
 1. ✅ Terminal basics
-2. 🟡 How the internet works + HTTP (raw server in progress)
+2. ✅ How the internet works + HTTP (raw server, CRUD, search, file storage)
 3. ⬜ Backend core: REST APIs, routing, middleware, validation, auth (sessions, JWT, password hashing)
 4. ⬜ Databases: raw SQL, indexes, transactions, connection pooling
 5. ⬜ Scaling: caching (Redis), queues, background jobs, load balancers
