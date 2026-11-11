@@ -1,9 +1,21 @@
   const net = require("net");
+  const fs = require("fs");
 
-  const notes = [
-    { id: 1, text: "Learn HTTP" },
-    { id: 2, text: "Build a server" },
-  ];
+  const FILE = __dirname + "/notes.json";
+
+  function loadNotes() {
+    if (!fs.existsSync(FILE)) {
+      return [];
+    }
+    return JSON.parse(fs.readFileSync(FILE, "utf8"));
+  }
+
+  function saveNotes() {
+    fs.writeFileSync(FILE, JSON.stringify(notes, null, 2));
+  }
+
+  const notes = loadNotes();
+  console.log("Loaded", notes.length, "notes from disk");
 
   const server = net.createServer((socket) => {
     socket.on("data", (data) => {
@@ -30,6 +42,7 @@
           const input = JSON.parse(requestBody);
           const note = { id: notes.length + 1, text: input.text };
           notes.push(note);
+          saveNotes();
           status = "201 Created";
           body = JSON.stringify(note);
         } catch (err) {
