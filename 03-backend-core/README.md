@@ -23,7 +23,7 @@ pnpm install
 | 03 | [Validation](./03-validation/) | Don't trust anything a customer hands you |
 | 04 | [Project structure](./04-project-structure/) | Splitting one big file into routes, controllers, services |
 | 05 | [Config and env vars](./05-config-env/) | Keeping secrets and settings out of the code |
-| 06 | Password hashing | Storing passwords so even you can't read them |
+| 06 | [Password hashing](./06-password-hashing/) | Storing passwords so even you can't read them |
 | 07 | Sessions and cookies | Remembering who someone is between requests |
 | 08 | JWT | A signed ID card the customer carries |
 | 09 | Authorization | Logged in is not the same as allowed |

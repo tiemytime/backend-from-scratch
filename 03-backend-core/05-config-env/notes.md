@@ -1,6 +1,6 @@
 # Config and environment variables
 
-[← Project structure](../04-project-structure/) · [Backend core](../)
+[← Project structure](../04-project-structure/) · [Backend core](../) · [Password hashing →](../06-password-hashing/)
 
 ## 1. The problem
 
