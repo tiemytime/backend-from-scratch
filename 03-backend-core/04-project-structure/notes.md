@@ -1,6 +1,6 @@
 # Project structure
 
-[← Validation](../03-validation/) · [Backend core](../)
+[← Validation](../03-validation/) · [Backend core](../) · [Config and env vars →](../05-config-env/)
 
 ## 1. The problem
 
