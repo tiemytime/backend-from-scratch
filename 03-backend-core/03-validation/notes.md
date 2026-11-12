@@ -1,6 +1,6 @@
 # Validation
 
-[← Middleware](../02-middleware/) · [Backend core](../)
+[← Middleware](../02-middleware/) · [Backend core](../) · [Project structure →](../04-project-structure/)
 
 ## 1. The problem
 
