@@ -1,6 +1,6 @@
 # Middleware
 
-[← Express](../01-express/) · [Backend core](../)
+[← Express](../01-express/) · [Backend core](../) · [Validation →](../03-validation/)
 
 ## 1. The problem
 

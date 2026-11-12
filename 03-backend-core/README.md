@@ -20,7 +20,7 @@ pnpm install
 |---|---|---|
 | 01 | [Express](./01-express/) | A ready-made shop fitting instead of building it all by hand |
 | 02 | [Middleware](./02-middleware/) | A row of staff every customer walks past before the counter |
-| 03 | Validation | Don't trust anything a customer hands you |
+| 03 | [Validation](./03-validation/) | Don't trust anything a customer hands you |
 | 04 | Project structure | Splitting one big file into routes, controllers, services |
 | 05 | Config and env vars | Keeping secrets and settings out of the code |
 | 06 | Password hashing | Storing passwords so even you can't read them |
