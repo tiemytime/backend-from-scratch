@@ -11,6 +11,7 @@ Written for me, and for anyone starting backend from zero.
 | 01 | [Terminal](./01-terminal/notes.md) | The 4 pieces of a terminal, stdin/stdout/stderr, pipes, redirects, PATH, job control, escape codes, nvim basics |
 | 02 | [How the web works + HTTP](./02-http/notes.md) | DNS → TCP → TLS → request → response, status codes, methods, REST, headers, cookies |
 | | [Build a server from scratch](./02-http/build-a-server/) | 9 steps: raw TCP → reply → routing → JSON → POST → file storage → `http` module → CRUD → search |
+| 03 | [Backend core](./03-backend-core/) | Express, middleware, validation, auth, security |
 
 ## Run the code
 
@@ -27,7 +28,7 @@ curl localhost:3000/api/notes
 
 1. ✅ Terminal basics
 2. ✅ How the internet works + HTTP (raw server, CRUD, search, file storage)
-3. ⬜ Backend core: REST APIs, routing, middleware, validation, auth (sessions, JWT, password hashing)
+3. 🔄 Backend core: REST APIs, routing, middleware, validation, auth (sessions, JWT, password hashing)
 4. ⬜ Databases: raw SQL, indexes, transactions, connection pooling
 5. ⬜ Scaling: caching (Redis), queues, background jobs, load balancers
 6. ⬜ Deploy: Docker, logs, monitoring
