@@ -28,4 +28,4 @@ pnpm install
 | 08 | [JWT](./08-jwt/) | A signed ID card the customer carries |
 | 09 | [Authorization](./09-authorization/) | Logged in is not the same as allowed |
 | 10 | [CORS](./10-cors/) | Which websites may call your API from a browser |
-| 11 | Security basics | Rate limiting, security headers, common attacks |
+| 11 | [Security basics](./11-security-basics/) | Rate limiting, security headers, common attacks |
