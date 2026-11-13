@@ -25,7 +25,7 @@ pnpm install
 | 05 | [Config and env vars](./05-config-env/) | Keeping secrets and settings out of the code |
 | 06 | [Password hashing](./06-password-hashing/) | Storing passwords so even you can't read them |
 | 07 | [Sessions and cookies](./07-sessions-cookies/) | Remembering who someone is between requests |
-| 08 | JWT | A signed ID card the customer carries |
-| 09 | Authorization | Logged in is not the same as allowed |
+| 08 | [JWT](./08-jwt/) | A signed ID card the customer carries |
+| 09 | [Authorization](./09-authorization/) | Logged in is not the same as allowed |
 | 10 | CORS | Which websites may call your API from a browser |
 | 11 | Security basics | Rate limiting, security headers, common attacks |
