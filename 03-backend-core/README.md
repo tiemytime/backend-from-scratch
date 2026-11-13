@@ -27,5 +27,5 @@ pnpm install
 | 07 | [Sessions and cookies](./07-sessions-cookies/) | Remembering who someone is between requests |
 | 08 | [JWT](./08-jwt/) | A signed ID card the customer carries |
 | 09 | [Authorization](./09-authorization/) | Logged in is not the same as allowed |
-| 10 | CORS | Which websites may call your API from a browser |
+| 10 | [CORS](./10-cors/) | Which websites may call your API from a browser |
 | 11 | Security basics | Rate limiting, security headers, common attacks |
